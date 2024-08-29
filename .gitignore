@@ -1,3 +1,6 @@
 __pycache__
 *.csv*
 _*.py
+.env
+.venv
+*.log
