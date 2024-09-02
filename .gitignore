@@ -6,3 +6,4 @@ _*.py
 *.log
 *.json
 .DS_Store
+final/
