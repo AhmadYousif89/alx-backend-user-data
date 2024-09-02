@@ -4,3 +4,5 @@ _*.py
 .env
 .venv
 *.log
+*.json
+.DS_Store
