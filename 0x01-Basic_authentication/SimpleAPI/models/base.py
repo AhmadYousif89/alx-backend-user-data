@@ -24,13 +24,13 @@ class Base:
         self.id = kwargs.get('id', str(uuid.uuid4()))
         if kwargs.get('created_at') is not None:
             self.created_at = datetime.strptime(
-                str(kwargs.get('created_at')), TIMESTAMP_FORMAT
+                kwargs.get('created_at'), TIMESTAMP_FORMAT
             )
         else:
             self.created_at = datetime.utcnow()
         if kwargs.get('updated_at') is not None:
             self.updated_at = datetime.strptime(
-                str(kwargs.get('updated_at')), TIMESTAMP_FORMAT
+                kwargs.get('updated_at'), TIMESTAMP_FORMAT
             )
         else:
             self.updated_at = datetime.utcnow()
@@ -74,10 +74,9 @@ class Base:
         """Save all objects to file"""
         s_class = cls.__name__
         file_path = ".db_{}.json".format(s_class)
-
-        objs_json = {
-            obj_id: obj.to_json(True) for obj_id, obj in DATA[s_class].items()
-        }
+        objs_json = {}
+        for obj_id, obj in DATA[s_class].items():
+            objs_json[obj_id] = obj.to_json(True)
 
         with open(file_path, 'w') as f:
             json.dump(objs_json, f)
@@ -120,12 +119,10 @@ class Base:
 
         def _search(obj):
             if len(attributes) == 0:
-                return True  # if no attributes, return all objects
+                return True
             for k, v in attributes.items():
                 if getattr(obj, k) != v:
-                    return (
-                        False  # if any attribute doesn't match, return False
-                    )
-            return True  # if all attributes match, return True
+                    return False
+            return True
 
         return list(filter(_search, DATA[s_class].values()))
