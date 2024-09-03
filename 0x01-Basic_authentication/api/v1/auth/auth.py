@@ -1,38 +1,37 @@
 #!/usr/bin/env python3
-"""Authentication module for the API.
+""" Module of Auth views
 """
-import re
-from typing import List, TypeVar
+
+from typing import List
 from flask import request
+from typing import TypeVar
 
 
 class Auth:
-    """Authentication class.
-    """
+    """Auth class"""
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Checks if a path requires authentication.
         """
-        if path is not None and excluded_paths is not None:
-            for exclusion_path in map(lambda x: x.strip(), excluded_paths):
-                pattern = ''
-                if exclusion_path[-1] == '*':
-                    pattern = '{}.*'.format(exclusion_path[0:-1])
-                elif exclusion_path[-1] == '/':
-                    pattern = '{}/*'.format(exclusion_path[0:-1])
-                else:
-                    pattern = '{}/*'.format(exclusion_path)
-                if re.match(pattern, path):
-                    return False
-        return True
+        Helper function to check if a path requires authentication or not.
+        """
+        if path is None or excluded_paths is None or len(excluded_paths) == 0:
+            return True
+        if path[-1] != '/':
+            path += '/'  # add trailing slash
+        if path in excluded_paths:
+            return False  # do not require authentication
+        return True  # require authentication
 
     def authorization_header(self, request=None) -> str:
-        """Gets the authorization header field from the request.
         """
-        if request is not None:
-            return request.headers.get('Authorization', None)
-        return None
+        Helper function to get the Authorization header from a request.
+        """
+        if request is None or 'Authorization' not in request.headers:
+            return None
+        return request.headers['Authorization']
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """Gets the current user from the request.
+        """
+        Helper function to get the current user.
         """
         return None
