@@ -1,9 +1,9 @@
 __pycache__
 *.csv*
-_*.py
 .env
 .venv
 *.log
 *.json
 .DS_Store
 final/
+transfer_to_wsl.py
