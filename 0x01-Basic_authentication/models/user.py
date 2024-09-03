@@ -22,7 +22,7 @@ class User(Base):
     def password(self) -> str:
         """ Getter of the password
         """
-        return self._password
+        return str(self._password) if self._password else ""
 
     @password.setter
     def password(self, pwd: str):
