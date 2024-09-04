@@ -25,18 +25,13 @@ class SessionDBAuth(SessionExpAuth):
         if session_id is None:
             return None
 
-        UserSession.load_from_file()
-        user_session = UserSession.search({'session_id': session_id})
-
+        user_session = UserSession.search({'session_id': session_id})[0]
         if not user_session:
             return None
-
-        user_session = user_session[0]
 
         expired_time = user_session.created_at + timedelta(
             seconds=self.session_duration
         )
-
         if expired_time < datetime.utcnow():
             return None
 
