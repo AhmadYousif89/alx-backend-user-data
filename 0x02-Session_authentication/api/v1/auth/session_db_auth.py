@@ -2,8 +2,8 @@
 """ Module of Session in Database
 """
 from api.v1.auth.session_exp_auth import SessionExpAuth
-from datetime import datetime, timedelta
 from models.user_session import UserSession
+from datetime import datetime, timedelta
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -19,8 +19,6 @@ class SessionDBAuth(SessionExpAuth):
         kwargs = {'user_id': user_id, 'session_id': session_id}
         user_session = UserSession(**kwargs)
         user_session.save()
-        UserSession.save_to_file()
-
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
@@ -28,19 +26,13 @@ class SessionDBAuth(SessionExpAuth):
         if session_id is None:
             return None
 
-        UserSession.load_from_file()
-        user_session = UserSession.search({'session_id': session_id})
+        user_session = UserSession.search({'session_id': session_id})[0]
 
-        if not user_session:
-            return None
-
-        user_session = user_session[0]
-
-        expired_time = user_session.created_at + timedelta(
-            seconds=self.session_duration
-        )
-
-        if expired_time < datetime.utcnow():
+        if (
+            not user_session
+            or (datetime.utcnow() - user_session.created_at).seconds
+            > self.session_duration
+        ):
             return None
 
         return user_session.user_id
@@ -55,20 +47,15 @@ class SessionDBAuth(SessionExpAuth):
             return False
 
         user_id = self.user_id_for_session_id(session_id)
-
         if not user_id:
             return False
 
-        user_session = UserSession.search({'session_id': session_id})
-
+        user_session = UserSession.search({'session_id': session_id})[0]
         if not user_session:
             return False
 
-        user_session = user_session[0]
-
         try:
             user_session.remove()
-            UserSession.save_to_file()
         except Exception:
             return False
 
