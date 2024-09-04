@@ -3,7 +3,7 @@
 """
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -25,14 +25,21 @@ class SessionDBAuth(SessionExpAuth):
         if session_id is None:
             return None
 
-        results = UserSession.search({'session_id': session_id})
-        if not results:
+        UserSession.load_from_file()
+        user_session = UserSession.search({'session_id': session_id})
+
+        if not user_session:
             return None
-        user_session = results[0]
-        if (
-            datetime.utcnow() - user_session.created_at
-        ).seconds > self.session_duration:
+
+        user_session = user_session[0]
+
+        expired_time = user_session.created_at + timedelta(
+            seconds=self.session_duration
+        )
+
+        if expired_time < datetime.utcnow():
             return None
+
         return user_session.user_id
 
     def destroy_session(self, request=None):
