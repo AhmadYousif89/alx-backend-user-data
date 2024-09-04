@@ -43,7 +43,10 @@ def auth_checkpoint() -> None:
     ]
     if not auth.require_auth(request.path, excluded_paths):
         return
-    if auth.authorization_header(request) and auth.session_cookie(request):
+    if (
+        auth.authorization_header(request) is None
+        and auth.session_cookie(request) is None
+    ):
         abort(401)
     user = auth.current_user(request)
     if not user:
