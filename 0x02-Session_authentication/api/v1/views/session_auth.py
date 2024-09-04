@@ -54,7 +54,7 @@ def auth_session_logout():
     Return:
       - Empty dictionary
     """
-    from api.v1.auth import auth
+    from api.v1.app import auth  # Global auth object
 
     if auth.destroy_session(request):
         return jsonify({})
