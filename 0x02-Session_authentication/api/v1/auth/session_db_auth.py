@@ -3,7 +3,7 @@
 """
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -17,8 +17,7 @@ class SessionDBAuth(SessionExpAuth):
             return None
 
         kwargs = {'user_id': user_id, 'session_id': session_id}
-        user_session = UserSession(**kwargs)
-        user_session.save()
+        UserSession(**kwargs).save()
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
@@ -54,5 +53,8 @@ class SessionDBAuth(SessionExpAuth):
             return False
 
         user_session = results[0]
-        user_session.remove()
+        try:
+            user_session.remove()
+        except Exception:
+            return False
         return True
