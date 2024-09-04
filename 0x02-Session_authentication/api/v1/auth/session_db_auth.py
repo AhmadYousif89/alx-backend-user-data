@@ -5,7 +5,7 @@ Session DB Authentication Module
 
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -16,7 +16,8 @@ class SessionDBAuth(SessionExpAuth):
         session_id = super().create_session(user_id)
         if session_id is None:
             return None
-        session_dict = {'user_id': user_id, 'created_at': datetime.now()}
+
+        session_dict = {'user_id': user_id, 'session_id': session_id}
         UserSession(**session_dict).save()
         return session_id
 
@@ -24,17 +25,15 @@ class SessionDBAuth(SessionExpAuth):
         """Return user ID based on session ID"""
         if session_id is None:
             return None
-        user = UserSession.search({'session_id': session_id})[0]
-        if not user:
+        UserSession.load_from_file()
+        user_session = UserSession.search({'session_id': session_id})[0]
+        if (
+            not user_session
+            or (datetime.utcnow() - user_session.created_at).seconds
+            > self.session_duration
+        ):
             return None
-        if self.session_duration <= 0:
-            return user.user_id
-        if 'created_at' not in user:
-            return None
-        created_at = user.get('created_at')
-        if (datetime.now() - created_at).seconds > self.session_duration:
-            return None
-        return user.user_id
+        return user_session.user_id
 
     def destroy_session(self, request=None):
         """Destroy session"""
@@ -46,9 +45,5 @@ class SessionDBAuth(SessionExpAuth):
         user = UserSession.search({'session_id': session_id})[0]
         if not user:
             return False
-        try:
-            user.remove()
-            UserSession.save_to_file()
-        except Exception:
-            return False
+        user.remove()
         return True
