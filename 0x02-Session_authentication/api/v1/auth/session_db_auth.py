@@ -19,21 +19,18 @@ class SessionDBAuth(SessionExpAuth):
         kwargs = {'user_id': user_id, 'session_id': session_id}
         user_session = UserSession(**kwargs)
         user_session.save()
-        UserSession.save_to_file()
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
         """User ID for Session ID Database"""
         if session_id is None:
             return None
-        UserSession.load_from_file()
-        user_session = UserSession.search({'session_id': session_id})[0]
 
-        if (
-            not user_session
-            or (datetime.utcnow() - user_session.created_at).seconds
-            > self.session_duration
-        ):
+        user_session = UserSession.search({'session_id': session_id})[0]
+        expired_time = user_session.created_at + timedelta(
+            seconds=self.session_duration
+        )
+        if expired_time < datetime.utcnow():
             return None
 
         return user_session.user_id
