@@ -21,6 +21,19 @@ def root():
     return jsonify({"message": "Bienvenue"})
 
 
+@app.route('/profile', methods=['GET'])
+def profile():
+    """GET /profile
+    Return:
+      - message
+    """
+    session_id = request.cookies.get("session_id") or ""
+    user = AUTH.get_user_from_session_id(session_id)
+    if user:
+        return jsonify({"email": user.email}), 200
+    abort(403)
+
+
 @app.route('/users', methods=['Get'])
 def get_users():
     """GET /users
