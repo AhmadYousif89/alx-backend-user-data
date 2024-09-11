@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """DB module
 """
+from typing import Union
 from sqlalchemy import Column, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -51,7 +52,7 @@ class DB:
             raise
         return result
 
-    def update_user(self, user_id: Column[int], **kwargs) -> None:
+    def update_user(self, user_id: Union[Column[int], int], **kwargs) -> None:
         """Update a user by its id"""
         user = self.find_user_by(id=user_id)
         for key, value in kwargs.items():
