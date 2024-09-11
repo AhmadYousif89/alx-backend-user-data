@@ -26,7 +26,7 @@ class Auth:
     def __init__(self):
         self._db = DB()
 
-    def get_users(self) -> list[User]:
+    def get_users(self):
         """Get all users"""
         return self._db.find_all(User)
 
