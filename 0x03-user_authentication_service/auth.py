@@ -68,11 +68,13 @@ class Auth:
         """Get user from session ID"""
         from sqlalchemy.orm.exc import NoResultFound  # type: ignore
 
+        if not session_id:
+            return
         try:
             user = self._db.find_user_by(session_id=session_id)
             return user
         except NoResultFound:
-            return None
+            return
 
     def destroy_session(self, user_id: int) -> None:
         """Destroy a user session ID"""
