@@ -30,3 +30,13 @@ class Auth:
             hashed_password = _hash_password(password)
             return self._db.add_user(email, hashed_password.decode())
         raise RuntimeError("Unexpected condition in register_user")
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """Validate user login"""
+        try:
+            user = self._db.find_user_by(email=email)
+            return bcrypt.checkpw(
+                password.encode(), user.hashed_password.encode()
+            )
+        except Exception:
+            return False
