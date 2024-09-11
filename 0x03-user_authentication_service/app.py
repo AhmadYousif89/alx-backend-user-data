@@ -13,7 +13,7 @@ app.url_map.strict_slashes = False
 
 
 @app.route('/', methods=['GET'])
-def root() -> str:
+def root():
     """GET /
     Return:
       - message
@@ -22,7 +22,7 @@ def root() -> str:
 
 
 @app.route('/users', methods=['POST'])
-def register_user() -> str:
+def register_user():
     """POST /users
     Return:
         - Response object and a status code
