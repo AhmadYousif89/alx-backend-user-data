@@ -14,7 +14,10 @@ NEW_PASSWD = "t4rt1fl3tt3"
 
 def register_user(email: str, password: str):
     """Register a user"""
-    AUTH.register_user(email, password)
+    user = AUTH.register_user(email, password)
+    assert user is not None
+    assert isinstance(user, User)
+    assert str(user.email) == EMAIL
 
 
 def log_in_wrong_password(email: str, password: str):
@@ -45,7 +48,7 @@ def profile_logged(session_id: str):
     assert user is not None
     assert isinstance(user, User)
     assert isinstance(user.email, str)
-    assert user.email == EMAIL
+    assert str(user.email) == EMAIL
 
 
 def log_out(session_id: str):
