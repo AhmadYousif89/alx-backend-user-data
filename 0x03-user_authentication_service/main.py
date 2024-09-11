@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-End-to-end integration test 
+End-to-end integration test
 """
 from db import DB
 from user import User
