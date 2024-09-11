@@ -37,3 +37,16 @@ class DB:
             self._session.rollback()
             new_user = None
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Find a user by a given keyword argument"""
+        from sqlalchemy.exc import InvalidRequestError
+        from sqlalchemy.orm.exc import NoResultFound  # type: ignore
+
+        try:
+            result = self._session.query(User).filter_by(**kwargs).first()
+            if result is None:
+                raise NoResultFound
+        except InvalidRequestError:
+            raise
+        return result
