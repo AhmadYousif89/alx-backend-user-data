@@ -60,12 +60,11 @@ class Auth:
 
     def get_user_from_session_id(self, session_id: str) -> User:
         """Get user from session ID"""
-        if session_id is None:
-            return None
+        from sqlalchemy.orm.exc import NoResultFound  # type: ignore
+
         try:
             user = self._db.find_user_by(session_id=session_id)
-            if user:
-                return user
-        except Exception:
+        except NoResultFound:
             pass
-        raise RuntimeError("Unexpeced condition in get_user_from_session_id")
+        else:
+            return user
