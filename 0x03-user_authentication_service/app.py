@@ -8,14 +8,13 @@ from flask import Flask, Response, jsonify, request
 from auth import Auth
 
 
+AUTH = Auth()
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-AUTH = Auth()
-
 
 @app.route('/')
-def hello():
+def root() -> str:
     """GET /
     Return:
       - message
@@ -24,14 +23,14 @@ def hello():
 
 
 @app.route('/users', methods=['POST'])
-def register_user():
+def register_user() -> str:
     """POST /users
     Return:
         - Response object and a status code
     """
+    email = request.form['email']
+    password = request.form['password']
     try:
-        email = request.form['email']
-        password = request.form['password']
         user = AUTH.register_user(email, password)
         return jsonify({"email": user.email, "message": "user created"})
     except Exception:
