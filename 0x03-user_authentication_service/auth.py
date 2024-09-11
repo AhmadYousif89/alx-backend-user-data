@@ -53,6 +53,7 @@ class Auth:
         """Create a session ID"""
         try:
             user = self._db.find_user_by(email=email)
+            assert isinstance(user.id, int), "user.id must be an integer"
             session_id = _generate_uuid()
             self._db.update_user(user.id, session_id=session_id)
             return session_id
@@ -68,3 +69,7 @@ class Auth:
             return user
         except NoResultFound:
             return None
+
+    def destroy_session(self, user_id: int) -> None:
+        """Destroy a user session ID"""
+        self._db.update_user(user_id, session_id=None)
