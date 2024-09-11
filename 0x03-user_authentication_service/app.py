@@ -8,13 +8,14 @@ from flask import Flask, Response, jsonify, request
 from auth import Auth
 
 
-AUTH = Auth()
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+AUTH = Auth()
+
 
 @app.route('/')
-def hello() -> Response:
+def hello():
     """GET /
     Return:
       - message
@@ -23,7 +24,7 @@ def hello() -> Response:
 
 
 @app.route('/users', methods=['POST'])
-def register_user() -> Response | tuple[Response, Literal[400]]:
+def register_user():
     """POST /users
     Return:
         - Response object and a status code
@@ -38,4 +39,4 @@ def register_user() -> Response | tuple[Response, Literal[400]]:
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)
