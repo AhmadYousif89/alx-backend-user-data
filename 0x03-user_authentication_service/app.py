@@ -14,7 +14,7 @@ app.url_map.strict_slashes = False
 
 
 @app.route('/', methods=['GET'])
-def root() -> Response:
+def root() -> str:
     """GET /
     Return:
       - message
