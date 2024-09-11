@@ -14,7 +14,7 @@ app.url_map.strict_slashes = False
 
 
 @app.route('/', methods=['GET'])
-def root() -> str:
+def root() -> Response:
     """GET /
     Return:
       - message
@@ -32,10 +32,10 @@ def register_user() -> str:
     password = request.form['password']
     try:
         user = AUTH.register_user(email, password)
-        return jsonify({"email": user.email, "message": "user created"})  # type: ignore
+        return jsonify({"email": user.email, "message": "user created"})
     except Exception:
-        return jsonify({"message": "email already registered"}), 400  # type: ignore
+        return jsonify({"message": "email already registered"}), 400
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)
