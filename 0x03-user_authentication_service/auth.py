@@ -4,6 +4,7 @@ Auth module
 """
 
 import bcrypt
+from typing import Union
 from db import DB, User
 
 
@@ -58,13 +59,12 @@ class Auth:
         except Exception:
             pass
 
-    def get_user_from_session_id(self, session_id: str) -> User:
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
         """Get user from session ID"""
         from sqlalchemy.orm.exc import NoResultFound  # type: ignore
 
         try:
             user = self._db.find_user_by(session_id=session_id)
-        except NoResultFound:
-            pass
-        else:
             return user
+        except NoResultFound:
+            return None
