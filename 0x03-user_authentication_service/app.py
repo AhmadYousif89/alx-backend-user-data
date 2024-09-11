@@ -3,7 +3,6 @@
 Simple Flask app
 """
 
-from typing import Literal
 from flask import Flask, Response, jsonify, request
 from auth import Auth
 
@@ -19,7 +18,7 @@ def root() -> str:
     Return:
       - message
     """
-    return jsonify({"message": "Bienvenue"})  # type: ignore
+    return jsonify({"message": "Bienvenue"})
 
 
 @app.route('/users', methods=['POST'])
@@ -38,4 +37,4 @@ def register_user() -> str:
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000")
+    app.run(host="0.0.0.0", port=5000, debug=True)
